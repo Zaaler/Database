@@ -482,32 +482,14 @@ void find_and_print(node * root, int key, bool verbose) {
 void find_and_print_range( node * root, int key_start, int key_end,
 		bool verbose ) {
 	int i;
-	
-	///////////////////// EDIT #1 ////////////////////////
-	
-	// OLD CODE FOR KEY END > KEY START
-	//int array_size = key_end - key_start + 1;
-	
-	// KEY START > THAN KEY END => ENFOCRED IN MAIN r CASE
-	// MAYBE ANOTHER WAY TO DO THIS
-	
-	// VERIFIED POSITIVE ARRAY SIZE
-	int array_size = key_start - key_end + 1;
-	
+	int array_size = key_end - key_start + 1;
 	int returned_keys[array_size];
 	void * returned_pointers[array_size];
-	
-	// NEW FIND RANGE FUNCTION 
 	int num_found = find_range( root, key_start, key_end, verbose,
 			returned_keys, returned_pointers );
-	
-	// IF TREE IS EMPTY
 	if (!num_found)
 		printf("None found.\n");
-	
-	// IF TREE HAS AT LEAST ONE VALUE
 	else {
-		// PRINT AT LEAST ONE KEY
 		for (i = 0; i < num_found; i++)
 			printf("Key: %d   Location: %lx  Value: %d\n",
 					returned_keys[i],
@@ -525,36 +507,18 @@ void find_and_print_range( node * root, int key_start, int key_end,
  */
 int find_range( node * root, int key_start, int key_end, bool verbose,
 		int returned_keys[], void * returned_pointers[]) {
-	
 	int i, num_found;
-	
 	num_found = 0;
-	
 	node * n = find_leaf( root, key_start, verbose );
-	
 	if (n == NULL) return 0;
-	
-	/////////////////// EDIT #2 /////////////////////
-	// ITERATE WHILE KEYS GREATER THAN START KEY
-	for (i = 0; i < n->num_keys && n->keys[i] > key_start; i++) ;
-	
-	// IF SINGLE VALUED TREE 
+	for (i = 0; i < n->num_keys && n->keys[i] < key_start; i++) ;
 	if (i == n->num_keys) return 0;
-	
-	// WHILE N DOESN'T REACH ROOT
 	while (n != NULL) {
-		
-		// WHILE N < NUMBER OF KEYS
-		// AND
-		// CURRENT KEY GREATER THAN LAST KEY IN RANGE
-		for ( ; i < n->num_keys && n->keys[i] >= key_end; i++) {
-			// BRING IN THE KEYS 
+		for ( ; i < n->num_keys && n->keys[i] <= key_end; i++) {
 			returned_keys[num_found] = n->keys[i];
 			returned_pointers[num_found] = n->pointers[i];
 			num_found++;
 		}
-		// ITERATE POINTER TO NEXT LEAF
-		// ROOT RETURNS NULL POINTER 
 		n = n->pointers[order - 1];
 		i = 0;
 	}
@@ -568,22 +532,14 @@ int find_range( node * root, int key_start, int key_end, bool verbose,
  * Returns the leaf containing the given key.
  */
 node * find_leaf( node * root, int key, bool verbose ) {
-	
 	int i = 0;
 	node * c = root;
-	
-	// IF C = NULL NO TREE
 	if (c == NULL) {
 		if (verbose) 
 			printf("Empty tree.\n");
 		return c;
 	}
-	
-	// WHILE LOOKING AT LEAFS RETURN PATH
 	while (!c->is_leaf) {
-		
-		// DOES SAME THING AS NORMAL 
-		// IMPOSSIBLE TO RUN VERBOSE AND PATH FIND
 		if (verbose) {
 			printf("[");
 			for (i = 0; i < c->num_keys - 1; i++)
@@ -591,19 +547,8 @@ node * find_leaf( node * root, int key, bool verbose ) {
 			printf("%d] ", c->keys[i]);
 		}
 		i = 0;
-		
-		/////////////////// EDIT #3 ///////////////////////////
-		// 1 2 3 4
-		// 3
-		// 4 3 2 1
-		// 3
-		// WHILE TRAVERSING CURRENT LEAF
 		while (i < c->num_keys) {
-			
-			// IF KEY < CURRENT KEY KEEP TRAVERSING
-			if (key <= c->keys[i]) i++;
-			
-			// ELSE CURRENT KEY > KEY
+			if (key >= c->keys[i]) i++;
 			else break;
 		}
 		if (verbose)
@@ -731,11 +676,8 @@ node * insert_into_leaf( node * leaf, int key, record * pointer ) {
 
 	// WHILE INSERT LOCATION LESS THAN NUMBER OF LEAFS CHILDREN
 	// AND
-	// LEAFS INSERT LOCATION KEY IS LESS THAN NEW KEY
-	
-	////////////////////// EDIT #4 //////////////////////////////
-	
-	while (insertion_point < leaf->num_keys && leaf->keys[insertion_point] > key)
+	// LEAFS INSERT LOCATION KEY IS LESS THAN NEW KEY 
+	while (insertion_point < leaf->num_keys && leaf->keys[insertion_point] < key)
 		insertion_point++;
 	
 	// BUBBLING LOOP
@@ -787,27 +729,21 @@ node * insert_into_leaf_after_splitting(node * root, node * leaf, int key, recor
 		exit(EXIT_FAILURE);
 	}
 	
-
+	insertion_index = 0;
 	
 	// FIND INSERTION POINT
 	// WHILE THE INSERTION POINT PROTECTS ORDER SIZE OF LEAF
 	// AND
 	// LEAF KEYS ARE LESS THAN CURRENT KEY
 	
-	/////////////////////// EDIT #5 //////////////////////////////
-	// WHILE INSERT LOCATION NOT REACHED AND VIABLE
-	// AND
-	// LEAF KEY VALUE > NEW KEY
-	insertion_index = 0;
-	while (insertion_index < order - 1 && leaf->keys[insertion_index] > key)
-		// MOVE TO NEXT LEAF KEY
+	while (insertion_index < order - 1 && leaf->keys[insertion_index] < key)
 		insertion_index++;
 
 	// INSERTING SINGLE VALUE INTO SPLIT LEAF
 	for (i = 0, j = 0; i < leaf->num_keys; i++, j++) {
-		// IF INSERT HOLE LOCATION
+		// IF INSERT LOCATION
 		if (j == insertion_index) j++;
-		// INSERT INTO LEAF OR MAKE HOLE 
+		// INSERT INTO LEAF
 		temp_keys[j] = leaf->keys[i];
 		temp_pointers[j] = leaf->pointers[i];
 	}
@@ -950,7 +886,6 @@ node * insert_into_node_after_splitting(node * root, node * old_node, int left_i
 	old_node->num_keys = 0;
 	
 	// WHILE DEALING WITH OLD NODE
-	// 0 UPTO SPLIT
 	for (i = 0; i < split - 1; i++) {
 		// COPY OLD NODE UPTO SPLIT LOCATION
 		old_node->pointers[i] = temp_pointers[i];
@@ -960,12 +895,11 @@ node * insert_into_node_after_splitting(node * root, node * old_node, int left_i
 	
 	// COPY SPLIT LOCATION POINTER TO RIGHT SIDE POINTER
 	old_node->pointers[i] = temp_pointers[i];
-
-	// STORE LEFT SIDE SPLIT KEY TEMP
+	
+	// STORE LEFT SIDE SPLIT KEY 
 	k_prime = temp_keys[split - 1];
 	
-	// PUT NEW NODE ON RIGHT SIDE
-	// SPLIT UP TO ORDER 
+	// PUT NEW NODE ON RIGHT SIDE 
 	for (++i, j = 0; i < order; i++, j++) {
 		new_node->pointers[j] = temp_pointers[i];
 		new_node->keys[j] = temp_keys[i];
@@ -1150,9 +1084,6 @@ node * insert( node * root, int key, int value ) {
 
 
 // DELETION.
-
-// NO EDITS NEEDED ONLY LOOKS FOR KEY VALUES TO REMOVE
-// MIGHT NOT BE OPTIMIZED FOR DELETE
 
 /* Utility function for deletion.  Retrieves
  * the index of a node's nearest neighbor (sibling)
@@ -1598,9 +1529,7 @@ int main( int argc, char ** argv ) {
 			break;
 		case 'r':
 			scanf("%d %d", &input, &range2);
-			/////////////////// EDIT #6 ////////////////////////
-			// VERIFY RANGE VALUES ARE IN CORRECT ORDER
-			if (input < range2) {
+			if (input > range2) {
 				int tmp = range2;
 				range2 = input;
 				input = tmp;
