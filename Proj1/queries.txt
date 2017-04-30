@@ -1,0 +1,14 @@
+﻿Zachary Allen
+2/2/17
+Database Project #1
+
+1. SELECT first_name, last_name, hire_date FROM employees WHERE TIMESTAMPDIFF (MONTH, hire_date, (SELECT hire_date FROM employees ORDER BY hire_date DESC LIMIT 1) ) < 1 ORDER BY hire_date ASC INTO OUTFILE '/var/lib/mysql-files/partA.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+
+
+2. CREATE VIEW high_salaries AS (SELECT employees.first_name, employees.last_name, salaries.salary FROM `salaries` INNER JOIN `employees` ON salaries.emp_no = employees.emp_no WHERE salary >= 120000);
+   SELECT * from high_salaries INTO OUTFILE '/var/lib/mysql-files/partB.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+	
+	
+3. CREATE VIEW `high_salary_names` AS SELECT distinct first_name, last_name FROM `high_salaries` ORDER BY first_name ASC INTO OUTFILE 'partC.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+   SELECT * FROM high_salary_names INTO OUTFILE '/var/lib/mysql-files/partC.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+	
