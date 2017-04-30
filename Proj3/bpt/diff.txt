@@ -1,0 +1,140 @@
+485c485,496
+< 	int array_size = key_end - key_start + 1;
+---
+> 	
+> 	///////////////////// EDIT #1 ////////////////////////
+> 	
+> 	// OLD CODE FOR KEY END > KEY START
+> 	//int array_size = key_end - key_start + 1;
+> 	
+> 	// KEY START > THAN KEY END => ENFOCRED IN MAIN r CASE
+> 	// MAYBE ANOTHER WAY TO DO THIS
+> 	
+> 	// VERIFIED POSITIVE ARRAY SIZE
+> 	int array_size = key_start - key_end + 1;
+> 	
+487a499,500
+> 	
+> 	// NEW FIND RANGE FUNCTION 
+489a503,504
+> 	
+> 	// IF TREE IS EMPTY
+491a507,508
+> 	
+> 	// IF TREE HAS AT LEAST ONE VALUE
+492a510
+> 		// PRINT AT LEAST ONE KEY
+509a528
+> 	
+510a530
+> 	
+511a532
+> 	
+512a534
+> 	
+514c536,541
+< 	for (i = 0; i < n->num_keys && n->keys[i] < key_start; i++) ;
+---
+> 	
+> 	/////////////////// EDIT #2 /////////////////////
+> 	// ITERATE WHILE KEYS GREATER THAN START KEY
+> 	for (i = 0; i < n->num_keys && n->keys[i] > key_start; i++) ;
+> 	
+> 	// IF SINGLE VALUED TREE 
+515a543,544
+> 	
+> 	// WHILE N DOESN'T REACH ROOT
+517c546,551
+< 		for ( ; i < n->num_keys && n->keys[i] <= key_end; i++) {
+---
+> 		
+> 		// WHILE N < NUMBER OF KEYS
+> 		// AND
+> 		// CURRENT KEY GREATER THAN LAST KEY IN RANGE
+> 		for ( ; i < n->num_keys && n->keys[i] >= key_end; i++) {
+> 			// BRING IN THE KEYS 
+521a556,557
+> 		// ITERATE POINTER TO NEXT LEAF
+> 		// ROOT RETURNS NULL POINTER 
+534a571
+> 	
+536a574,575
+> 	
+> 	// IF C = NULL NO TREE
+541a581,582
+> 	
+> 	// WHILE LOOKING AT LEAFS RETURN PATH
+542a584,586
+> 		
+> 		// DOES SAME THING AS NORMAL 
+> 		// IMPOSSIBLE TO RUN VERBOSE AND PATH FIND
+549a594,600
+> 		
+> 		/////////////////// EDIT #3 ///////////////////////////
+> 		// 1 2 3 4
+> 		// 3
+> 		// 4 3 2 1
+> 		// 3
+> 		// WHILE TRAVERSING CURRENT LEAF
+551c602,606
+< 			if (key >= c->keys[i]) i++;
+---
+> 			
+> 			// IF KEY < CURRENT KEY KEEP TRAVERSING
+> 			if (key <= c->keys[i]) i++;
+> 			
+> 			// ELSE CURRENT KEY > KEY
+679,680c734,738
+< 	// LEAFS INSERT LOCATION KEY IS LESS THAN NEW KEY 
+< 	while (insertion_point < leaf->num_keys && leaf->keys[insertion_point] < key)
+---
+> 	// LEAFS INSERT LOCATION KEY IS LESS THAN NEW KEY
+> 	
+> 	////////////////////// EDIT #4 //////////////////////////////
+> 	
+> 	while (insertion_point < leaf->num_keys && leaf->keys[insertion_point] > key)
+732c790
+< 	insertion_index = 0;
+---
+> 
+739c797,803
+< 	while (insertion_index < order - 1 && leaf->keys[insertion_index] < key)
+---
+> 	/////////////////////// EDIT #5 //////////////////////////////
+> 	// WHILE INSERT LOCATION NOT REACHED AND VIABLE
+> 	// AND
+> 	// LEAF KEY VALUE > NEW KEY
+> 	insertion_index = 0;
+> 	while (insertion_index < order - 1 && leaf->keys[insertion_index] > key)
+> 		// MOVE TO NEXT LEAF KEY
+744c808
+< 		// IF INSERT LOCATION
+---
+> 		// IF INSERT HOLE LOCATION
+746c810
+< 		// INSERT INTO LEAF
+---
+> 		// INSERT INTO LEAF OR MAKE HOLE 
+888a953
+> 	// 0 UPTO SPLIT
+898,899c963,964
+< 	
+< 	// STORE LEFT SIDE SPLIT KEY 
+---
+> 
+> 	// STORE LEFT SIDE SPLIT KEY TEMP
+902c967,968
+< 	// PUT NEW NODE ON RIGHT SIDE 
+---
+> 	// PUT NEW NODE ON RIGHT SIDE
+> 	// SPLIT UP TO ORDER 
+1087a1154,1156
+> // NO EDITS NEEDED ONLY LOOKS FOR KEY VALUES TO REMOVE
+> // MIGHT NOT BE OPTIMIZED FOR DELETE
+> 
+1532c1601,1603
+< 			if (input > range2) {
+---
+> 			/////////////////// EDIT #6 ////////////////////////
+> 			// VERIFY RANGE VALUES ARE IN CORRECT ORDER
+> 			if (input < range2) {
